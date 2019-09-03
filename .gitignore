@@ -1,9 +1,13 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+#credenciais
+/server/credentials.json
+
 # dependencies
 /node_modules
 /.pnp
 .pnp.js
+/server/node_modules/
 
 # testing
 /coverage
