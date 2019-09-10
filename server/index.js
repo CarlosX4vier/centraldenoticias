@@ -9,6 +9,7 @@ async function getArticles(categoria) {
     let con = await MongoClient.connect(url, { useNewUrlParser: true });
     let dbo = con.db("noticiasApp");
     console.log("> Categoria a ser pesquisada: " + categoria);
+
     http.get("http://newsapi.org/v2/everything?q=" + categoria + "&apiKey=" + credentials.newsapi + "&language=pt&sortBy=publishedAt", (res) => {
 
         res.setEncoding('utf8');
@@ -38,7 +39,6 @@ async function getArticles(categoria) {
                 console.error(e.message);
             }
         });
-
     })
     con.close()
 }
@@ -56,7 +56,10 @@ app.get('/', async (req, res) => {
 
     for (cat of cats) {
         getArticles(cat.titulo)
-        let noticias = await dbo.collection("noticias").find({ categoria: cat.titulo }).sort({ data: -1 }).limit(5).toArray();
+        if (cat.quantidade == null) {
+            cat.quantidade = 4;
+        }
+        let noticias = await dbo.collection("noticias").find({ categoria: cat.titulo }).limit(cat.quantidade).sort({ data: -1 }).toArray();
         artigos.push({
             title: cat.titulo,
             ordem: cat.ordem,
